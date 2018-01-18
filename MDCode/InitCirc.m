@@ -4,7 +4,7 @@ TStop = 1000 * dt;
 InitDist = 0.0;
 Method = 'VE'; % VE -- verlot; FD -- Forward Difference
 
-Mass0 = 14 * C.am; % Silicon
+Mass0 = 20 * C.am; % Silicon (changed)
 Mass1 = 5 * C.am; % Argon
 
 AtomSpacing = 0.5430710e-9;
