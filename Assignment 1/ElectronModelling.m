@@ -36,13 +36,31 @@ Elec(:, 3) = vth_ex;
 Elec(:, 4) = vth_ey;
 
 % Electrons moving
-t = 2e-6;
-for n = 0:t
-    Elec(:, 1) = Elec(:, 1) + Elec(:, 3)*t;
-    Elec(:, 2) = Elec(:, 2) + Elec(:, 4)*t;
-    plot(Elec(:, 1), Elec(:, 2))
-    figure;
-    hold on
-    n = n + 1e-6;
+
+% Looping on x-axis
+if Elec(:, 1) > 100e-9                       
+    Elec(:, 1) = Elec(:, 1) - 100e-9;
+else if Elec(:, 1) < 100e-9
+    Elec(:, 1) = Elec(:, 1) + 100e-9;
+else
+    Elec(:, 1) = Elec(:, 1);
 end
-hold off
+% Reflecting on y-axis
+if Elec(:, 2) > 200e-9 || Elec(:, 2) < 200e-9 
+    Elec(:, 4) = -1*Elec(:, 4);
+else
+    Elec(:, 2) = Elec(:, 2);
+end
+
+    
+% t = 2e-6;
+% for n = 0:t
+%     figure;
+%     plot(Elec(:, 1), Elec(:, 2));
+%     hold on
+%     Elec(:, 1) = Elec(:, 1) + Elec(:, 3)*t;
+%     Elec(:, 2) = Elec(:, 2) + Elec(:, 4)*t;
+%     plot(Elec(:, 1), Elec(:, 2));
+%     n = n + 1e-6;
+% end
+% hold off
