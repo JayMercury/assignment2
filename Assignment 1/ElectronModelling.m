@@ -40,13 +40,13 @@ Elec(:, 4) = vth_ey;
 % Looping on x-axis
 if Elec(:, 1) > 100e-9                       
     Elec(:, 1) = Elec(:, 1) - 100e-9;
-else if Elec(:, 1) < 100e-9
+elseif Elec(:, 1) < 100e-9
     Elec(:, 1) = Elec(:, 1) + 100e-9;
 else
     Elec(:, 1) = Elec(:, 1);
 end
 % Reflecting on y-axis
-if Elec(:, 2) > 200e-9 || Elec(:, 2) < 200e-9 
+if Elec(:, 2) > 200e-9 | Elec(:, 2) < 200e-9 
     Elec(:, 4) = -1*Elec(:, 4);
 else
     Elec(:, 2) = Elec(:, 2);
