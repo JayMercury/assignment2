@@ -22,7 +22,7 @@ W = 100e-9;
 
 % Current Condition and variables
 num = 5;                                % Number of electrons
-T = 300;                                % Kelvin
+T = 300;                                % Temperature (Kelvin)
 vth_e = sqrt((2*kb*T)/(pi*m_0));        % Thermal velocity of an electron
 vth_ex = vth_e*cos(360*rand(1,num));
 vth_ey = vth_e*sin(360*rand(1,num));
@@ -35,8 +35,7 @@ Elec(:, 2) = 200e-9*rand(num, 1);
 Elec(:, 3) = vth_ex;
 Elec(:, 4) = vth_ey;
 
-% Electrons moving
-
+% Setting up region restriction
 % Looping on x-axis
 if Elec(:, 1) > 100e-9                       
     Elec(:, 1) = Elec(:, 1) - 100e-9;
@@ -52,15 +51,13 @@ else
     Elec(:, 2) = Elec(:, 2);
 end
 
-    
-% t = 2e-6;
-% for n = 0:t
-%     figure;
-%     plot(Elec(:, 1), Elec(:, 2));
-%     hold on
-%     Elec(:, 1) = Elec(:, 1) + Elec(:, 3)*t;
-%     Elec(:, 2) = Elec(:, 2) + Elec(:, 4)*t;
-%     plot(Elec(:, 1), Elec(:, 2));
-%     n = n + 1e-6;
-% end
-% hold off
+% Electron moving
+t = 1e-6;
+dt = 1e-5;
+for n = 0:dt:t
+    plot(Elec(:, 1), Elec(:,2), 'b*')
+    Elec(:, 1) = Elec(:, 1)+ Elec(:, 3)*dt;
+    Elec(:, 2) = Elec(:, 2)+ Elec(:, 4)*dt;
+    hold on
+    pause(0.01)
+end
