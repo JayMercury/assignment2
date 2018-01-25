@@ -24,40 +24,42 @@ W = 100e-9;
 num = 5;                                % Number of electrons
 T = 300;                                % Temperature (Kelvin)
 vth_e = sqrt((2*kb*T)/(pi*m_0));        % Thermal velocity of an electron
-vth_ex = vth_e*cos(360*rand(1,num));
-vth_ey = vth_e*sin(360*rand(1,num));
+vth_ex = vth_e*cos(2*pi*rand(1,num));
+vth_ey = vth_e*sin(2*pi*rand(1,num));
 
 
 % Electrons Defining
 Elec = zeros(num, 4);
-Elec(:, 1) = 100e-9*rand(num, 1);
-Elec(:, 2) = 200e-9*rand(num, 1);
+Elec(:, 1) = L*rand(num, 1);
+Elec(:, 2) = W*rand(num, 1);
 Elec(:, 3) = vth_ex;
 Elec(:, 4) = vth_ey;
 
-% Setting up region restriction
-% Looping on x-axis
-if Elec(:, 1) > 100e-9                       
-    Elec(:, 1) = Elec(:, 1) - 100e-9;
-elseif Elec(:, 1) < 100e-9
-    Elec(:, 1) = Elec(:, 1) + 100e-9;
-else
-    Elec(:, 1) = Elec(:, 1);
-end
-% Reflecting on y-axis
-if Elec(:, 2) > 200e-9 | Elec(:, 2) < 200e-9 
-    Elec(:, 4) = -1*Elec(:, 4);
-else
-    Elec(:, 2) = Elec(:, 2);
-end
-
 % Electron moving
-t = 1e-6;
-dt = 1e-5;
+t = 1e-10;
+dt = 1e-15;
 for n = 0:dt:t
-    plot(Elec(:, 1), Elec(:,2), 'b*')
+    plot(Elec(:, 1), Elec(:,2),  'b.')
+    xlim([0 L])
+    ylim([0 W])
     Elec(:, 1) = Elec(:, 1)+ Elec(:, 3)*dt;
     Elec(:, 2) = Elec(:, 2)+ Elec(:, 4)*dt;
     hold on
-    pause(0.01)
+    pause(0.001)
+    
+    % Setting up boundaries
+    for m = 1:1:num
+        % Looping on x-axis
+        if Elec(m, 1) > L                       
+            Elec(m, 1) = Elec(m, 1) - L;
+        end
+        if Elec(m, 1) < 0
+            Elec(m, 1) = Elec(m, 1) + L;
+        end
+        % Reflecting on y-axis
+        if Elec(m, 2) > W || Elec(m, 2) < 0
+            Elec(m, 4) = -1*Elec(m, 4);
+        end
+    end
+
 end
