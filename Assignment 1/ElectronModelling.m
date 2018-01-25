@@ -27,9 +27,15 @@ vth_e = sqrt((2*kb*T)/(pi*m_0));        % Thermal velocity of an electron
 vth_ex = vth_e*cos(2*pi*rand(1,num));   % X-component of thermal velocity
 vth_ey = vth_e*sin(2*pi*rand(1,num));   % Y-component of thermal velocity
 % Maxwell-Boltzmann Distribution of x-component thermal velocity
-nx = (m_0/(2*pi*kb*T))^(1/2)*exp(-(m*vth_ex.^2)/(2*kb*T)); 
+nx = (m_0/(2*pi*kb*T))^(1/2)*exp(-(m_0*vth_ex.^2)/(2*kb*T)); 
 % Maxwell-Boltzmann Distribution of y-component thermal velocity
-ny = (m_0/(2*pi*kb*T))^(1/2)*exp(-(m*vth_ey.^2)/(2*kb*T)); 
+ny = (m_0/(2*pi*kb*T))^(1/2)*exp(-(m_0*vth_ey.^2)/(2*kb*T)); 
+f1 = figure;
+figure(f1);
+histogram(nx,5)
+f2 = figure;
+figure(f2);
+histogram(ny)
 
 % Electrons Defining
 Elec = zeros(num, 4);
@@ -41,14 +47,16 @@ Elec(:, 4) = vth_ey;
 % Electron moving
 t = 1e-10;
 dt = 1e-15;
+f3 = figure;
+figure(f3);
 for n = 0:dt:t
-    plot(Elec(:, 1), Elec(:,2),  'b.')
+    plot(Elec(:, 1), Elec(:,2), 'b.')
     xlim([0 L])
     ylim([0 W])
     Elec(:, 1) = Elec(:, 1)+ Elec(:, 3)*dt;
     Elec(:, 2) = Elec(:, 2)+ Elec(:, 4)*dt;
     hold on
-    pause(0.001)
+    pause(1e-9)
     
     % Setting up boundaries
     for m = 1:1:num
@@ -65,3 +73,4 @@ for n = 0:dt:t
         end
     end
 end
+hold off
