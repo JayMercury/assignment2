@@ -24,9 +24,12 @@ W = 100e-9;
 num = 5;                                % Number of electrons
 T = 300;                                % Temperature (Kelvin)
 vth_e = sqrt((2*kb*T)/(pi*m_0));        % Thermal velocity of an electron
-vth_ex = vth_e*cos(2*pi*rand(1,num));
-vth_ey = vth_e*sin(2*pi*rand(1,num));
-
+vth_ex = vth_e*cos(2*pi*rand(1,num));   % X-component of thermal velocity
+vth_ey = vth_e*sin(2*pi*rand(1,num));   % Y-component of thermal velocity
+% Maxwell-Boltzmann Distribution of x-component thermal velocity
+nx = (m_0/(2*pi*kb*T))^(1/2)*exp(-(m*vth_ex.^2)/(2*kb*T)); 
+% Maxwell-Boltzmann Distribution of y-component thermal velocity
+ny = (m_0/(2*pi*kb*T))^(1/2)*exp(-(m*vth_ey.^2)/(2*kb*T)); 
 
 % Electrons Defining
 Elec = zeros(num, 4);
@@ -61,5 +64,4 @@ for n = 0:dt:t
             Elec(m, 4) = -1*Elec(m, 4);
         end
     end
-
 end
