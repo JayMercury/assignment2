@@ -1,41 +1,37 @@
-% clear all
-clearvars
-clearvars -GLOBAL
 close all
-format shorte
+clear
+% clearvars
+% clearvars -GLOBAL
+% close all
+% format shorte
 
 % Constant
 q_0 = 1.60217653e-19;                   % electron charge
-hb = 1.054571596e-34;                   % Dirac constant
-h = hb * 2 * pi;                        % Planck constant
 m_0 = 9.10938215e-31;                   % electron mass
 kb = 1.3806504e-23;                     % Boltzmann constant
-eps_0 = 8.854187817e-12;                % vacuum permittivity
-mu_0 = 1.2566370614e-6;                 % vacuum permeability
-c = 299792458;                          % speed of light
-g = 9.80665;                            % metres (32.1740 ft) per s²
-am = 1.66053892e-27;
+tmn = 0.2e-12;                           % mean time between collisions
 
 % Region Defining
 L = 200e-9;
 W = 100e-9;
 
 % Current Condition and variables
-num = 5;                                % Number of electrons
+num = 1e4;                              % Number of electrons
 T = 300;                                % Temperature (Kelvin)
-vth_e = sqrt((2*kb*T)/(pi*m_0));        % Thermal velocity of an electron
-vth_ex = vth_e*cos(2*pi*rand(1,num));   % X-component of thermal velocity
-vth_ey = vth_e*sin(2*pi*rand(1,num));   % Y-component of thermal velocity
-% Maxwell-Boltzmann Distribution of x-component thermal velocity
-nx = (m_0/(2*pi*kb*T))^(1/2)*exp(-(m_0*vth_ex.^2)/(2*kb*T)); 
-% Maxwell-Boltzmann Distribution of y-component thermal velocity
-ny = (m_0/(2*pi*kb*T))^(1/2)*exp(-(m_0*vth_ey.^2)/(2*kb*T)); 
-f1 = figure;
-figure(f1);
-histogram(nx,5)
-f2 = figure;
-figure(f2);
-histogram(ny)
+vth_e = sqrt((2*kb*T)/(m_0));           % Thermal velocity of an electron
+vth_ex = (vth_e/sqrt(2))*randn(num, 1); % X-component of thermal velocity
+vth_ey = (vth_e/sqrt(2))*randn(num, 1); % Y-component of thermal velocity
+vthav = sqrt(vth_ex.^2+vth_ey.^2);      % Average of thermal velocity
+deltaT = (L/100)/vth_e;
+
+% Histogram for thermal velocity
+figure(1)
+subplot(3, 1, 1);
+histogram(vth_ex, 50)
+subplot(3, 1, 2);
+histogram(vth_ey, 50)
+subplot(3, 1, 3);
+histogram(vthav, 50)
 
 % Electrons Defining
 Elec = zeros(num, 4);
@@ -44,22 +40,35 @@ Elec(:, 2) = W*rand(num, 1);
 Elec(:, 3) = vth_ex;
 Elec(:, 4) = vth_ey;
 
-% Electron moving
-t = 1e-10;
-dt = 1e-15;
-f3 = figure;
-figure(f3);
+% Electron simulation
+t = 1e-10;                          % Total Time
+dt = 1e-13;                         % Time Step
+Psat = 1 - exp(-deltaT/tmn);        % Exponential Scattering Probability
+numplot = 5;                        % Number of electron plotted
+colorstring = 'kbgry';              % Colour Setup
+figure(2)
 for n = 0:dt:t
-    plot(Elec(:, 1), Elec(:,2), 'b.')
-    xlim([0 L])
-    ylim([0 W])
-    Elec(:, 1) = Elec(:, 1)+ Elec(:, 3)*dt;
-    Elec(:, 2) = Elec(:, 2)+ Elec(:, 4)*dt;
-    hold on
-    pause(1e-9)
     
+    % Part 2 Simulation
+    if Psat > rand()
+        vth_ex = (vth_e/sqrt(2))*randn(num, 1); 
+        vth_ey = (vth_e/sqrt(2))*randn(num, 1);
+        Elec(:, 3) = vth_ex;
+        Elec(:, 4) = vth_ey;
+    end
+    
+    %Plotting limited amount of electrons
+    for p = 1:1:numplot
+        subplot(2, 1, 1);
+        plot(Elec(p, 1), Elec(p,2), 'b.')
+        Elec(p, 1) = Elec(p, 1)+ Elec(p, 3)*dt;
+        Elec(p, 2) = Elec(p, 2)+ Elec(p, 4)*dt;
+        xlim([0 L])
+        ylim([0 W])
+        hold on
+    end
     % Setting up boundaries
-    for m = 1:1:num
+    for m = 1:1:numplot
         % Looping on x-axis
         if Elec(m, 1) > L                       
             Elec(m, 1) = Elec(m, 1) - L;
@@ -72,5 +81,12 @@ for n = 0:dt:t
             Elec(m, 4) = -1*Elec(m, 4);
         end
     end
+    
+    % Plotting average temperature 
+    vthav = mean(sqrt(vth_ex.^2 + vth_ey.^2)); % Average thermal velocity     
+    aveT = (0.5*m_0*vthav^2)/kb;               % Average temperature
+    subplot(2, 1, 2)
+    plot(n, aveT, 'r.')
+    hold on
+    pause(1e-9)
 end
-hold off
