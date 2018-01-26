@@ -26,12 +26,16 @@ deltaT = (L/100)/vth_e;
 
 % Histogram for thermal velocity
 figure(1)
+hold on
 subplot(3, 1, 1);
 histogram(vth_ex, 50)
+title('X-component of thermal velocity');
 subplot(3, 1, 2);
 histogram(vth_ey, 50)
+title('Y-component of thermal velocity');
 subplot(3, 1, 3);
 histogram(vthav, 50)
+title('Average of thermal velocity');
 
 % Electrons Defining
 Elec = zeros(num, 4);
@@ -42,7 +46,7 @@ Elec(:, 4) = vth_ey;
 
 % Electron simulation
 t = 1e-10;                          % Total Time
-dt = 1e-13;                         % Time Step
+dt = 1e-15;                         % Time Step
 Psat = 1 - exp(-deltaT/tmn);        % Exponential Scattering Probability
 numplot = 5;                        % Number of electron plotted
 colorstring = 'kbgry';              % Colour Setup
@@ -60,6 +64,7 @@ for n = 0:dt:t
     %Plotting limited amount of electrons
     for p = 1:1:numplot
         subplot(2, 1, 1);
+        title('Electrons movement');
         plot(Elec(p, 1), Elec(p,2), 'b.')
         Elec(p, 1) = Elec(p, 1)+ Elec(p, 3)*dt;
         Elec(p, 2) = Elec(p, 2)+ Elec(p, 4)*dt;
@@ -87,6 +92,7 @@ for n = 0:dt:t
     aveT = (0.5*m_0*vthav^2)/kb;               % Average temperature
     subplot(2, 1, 2)
     plot(n, aveT, 'r.')
+    title('Average temperature');
     hold on
     pause(1e-9)
 end
