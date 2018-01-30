@@ -25,7 +25,7 @@ vthav = sqrt(vth_ex.^2+vth_ey.^2);      % Average of thermal velocity
 deltaT = (L/100)/vth_e;
 
 % Histogram for thermal velocity
-figure(1)
+figure(1);
 hold on
 subplot(3, 1, 1);
 histogram(vth_ex, 100)
@@ -36,7 +36,6 @@ title('Y-component of thermal velocity');
 subplot(3, 1, 3);
 histogram(vthav, 100)
 title('Average of thermal velocity');
-hold off
 
 % Electrons Defining
 Elec = zeros(num, 4);
@@ -44,17 +43,19 @@ Elec(:, 1) = L*rand(num, 1);
 Elec(:, 2) = W*rand(num, 1);
 Elec(:, 3) = vth_ex;
 Elec(:, 4) = vth_ey;
+previous = zeros(num, 4);
+previous = Elec;
 
 % Electron simulation
-t = 1e-10;                          % Total Time
-dt = 1e-15;                         % Time Step
+figure(2);
+t = 1e-3;                          % Total Time
+dt = 1e-14;                         % Time Step
 Psat = 1 - exp(-deltaT/tmn);        % Exponential Scattering Probability
 numplot = 5;                        % Number of electron plotted
 color = hsv(numplot);              % Colour Setup
-figure(2)
 for n = 0:dt:t
     
-%     % Part 2 Simulation
+    % Part 2 Simulation
 %     if Psat > rand()
 %         vth_ex = (vth_e/sqrt(2))*randn(num, 1); 
 %         vth_ey = (vth_e/sqrt(2))*randn(num, 1);
@@ -79,29 +80,33 @@ for n = 0:dt:t
     rectangle('Position', [80e-9 0 40e-9 40e-9])
     rectangle('Position', [80e-9 60e-9 40e-9 40e-9])
     hold on
-    
+        
     %Plotting limited amount of electrons
     for q = 1:1:numplot
 %         subplot(2, 1, 1);
         title('Electrons movement');
-        plot(Elec(q, 1), Elec(q,2), 'color', color(q, :))
+        plot([previous(q, 1), Elec(q, 1)], [previous(q, 2), Elec(q,2)], 'color', color(q, :))
         xlim([0 L])
         ylim([0 W])
         hold on
         for p = 1:1:num
+            previous(p, 1) = Elec(p, 1);
+            previous(p, 2) = Elec(p, 2);            
             Elec(p, 1) = Elec(p, 1)+ Elec(p, 3)*dt;
             Elec(p, 2) = Elec(p, 2)+ Elec(p, 4)*dt;
         end
-        pause(1e-15)
     end
+
     % Setting up the boundaries
     for o = 1:1:num
         % Looping on x-axis
         if Elec(o, 1) > L                       
             Elec(o, 1) = Elec(o, 1) - L;
+            previous = Elec;
         end
         if Elec(o, 1) < 0
             Elec(o, 1) = Elec(o, 1) + L;
+            previous = Elec;
         end
         % Reflecting on y-axis
         if Elec(o, 2) > W || Elec(o, 2) < 0
@@ -124,4 +129,5 @@ for n = 0:dt:t
 %     title('Average temperature');
 %     hold on
 %     pause(1e-100)
+    pause(1e-10)
 end
