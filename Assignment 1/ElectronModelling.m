@@ -1,9 +1,5 @@
 close all
 clear
-% clearvars
-% clearvars -GLOBAL
-% close all
-% format shorte
 
 % Constant
 q_0 = 1.60217653e-19;                   % electron charge
@@ -53,34 +49,33 @@ dt = 1e-14;                         % Time Step
 Psat = 1 - exp(-deltaT/tmn);        % Exponential Scattering Probability
 numplot = 5;                        % Number of electron plotted
 color = hsv(numplot);              % Colour Setup
-for n = 0:dt:t
-    
-    % Part 2 Simulation
-%     if Psat > rand()
-%         vth_ex = (vth_e/sqrt(2))*randn(num, 1); 
-%         vth_ey = (vth_e/sqrt(2))*randn(num, 1);
-%         Elec(:, 3) = vth_ex;
-%         Elec(:, 4) = vth_ey;
-%     end
-    
-    % Part 3 simulation, setting up boundaries for electrons spawning
-%     for m = 1:1:num
-%         if Elec(m, 1) > 80e-9 || Elec(m, 1) < 120e-9
-%             vth_ex = (vth_e/sqrt(2))*randn(num, 1);
-%             Elec(:, 3) = vth_ex;
-%         end
-%         if Elec(m, 2) > 60e-9 || Elec(m, 2) < 40e-9
-%             vth_ey = (vth_e/sqrt(2))*randn(num, 1);
-%             Elec(:, 4) = vth_ey;
-%         end
-%     end
-    
-    % Part 3 Simulation, setting up rectangles boundary
+
+% Part 3 simulation, setting up limitation for electrons spawning
+for m = 1:1:num
+    if Elec(m, 1) > 80e-9 && Elec(m, 1) < 120e-9
+        Elec(m, 1) = L*rand();
+        if Elec(m, 2) > 60e-9 && Elec(m, 2) < 40e-9
+            Elec(m, 2) = W*rand();
+        end
+    end
+end
+
+    % Part 3 Simulation, setting up rectangles boundaries
 %     subplot(2, 1, 1);
     rectangle('Position', [80e-9 0 40e-9 40e-9])
     rectangle('Position', [80e-9 60e-9 40e-9 40e-9])
     hold on
-        
+    
+for n = 0:dt:t
+    
+    % Part 2 Simulation
+    if Psat > rand()
+        vth_ex = (vth_e/sqrt(2))*randn(num, 1); 
+        vth_ey = (vth_e/sqrt(2))*randn(num, 1);
+        Elec(:, 3) = vth_ex;
+        Elec(:, 4) = vth_ey;
+    end
+           
     %Plotting limited amount of electrons
     for q = 1:1:numplot
 %         subplot(2, 1, 1);
@@ -113,11 +108,15 @@ for n = 0:dt:t
             Elec(o, 4) = -1*Elec(o, 4);
         end
         % Part 3 Simulation, boundaries for electrons movements
-%         if Elec(o, 1) > 80e-9 || Elec(o, 1) < 120e-9
-%             Elec(o, 3) = -1*Elec(o, 3);
-%         end
-%         if Elec(o, 2) > 60e-9 || Elec(o, 2) < 40e-9
-%             Elec(o, 4) = -1*Elec(o, 4);
+        if Elec(o, 1) <= 120e-9 
+            if Elec(o, 1) >= 80e-9
+                Elec(o, 3) = -1*Elec(o, 3);
+            end
+        end
+%         if Elec(o, 2) > 60e-9
+%             if Elec(o, 2) < 40e-9
+%                 Elec(o, 4) = -1*Elec(o, 4);
+%             end
 %         end
     end
     
@@ -128,6 +127,5 @@ for n = 0:dt:t
 %     plot(n, aveT, 'r.')
 %     title('Average temperature');
 %     hold on
-%     pause(1e-100)
     pause(1e-10)
 end
