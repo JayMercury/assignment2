@@ -117,7 +117,6 @@ for n = 0:dt:t
     plot(n, aveT, 'r.')
     title('Average temperature');
     hold on
-    pause(1e-10)
 end
 
 % Density Plot

@@ -73,7 +73,6 @@ for n = 0:dt:t
         xlim([0 L])
         ylim([0 W])
         hold on
-        pause(1e-10)
     end
     
     % Setting up the boundaries
@@ -100,5 +99,4 @@ for n = 0:dt:t
     plot(n, aveT, 'r.')
     title('Average temperature');
     hold on
-    pause(1e-10)
 end
