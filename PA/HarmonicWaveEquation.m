@@ -1,15 +1,11 @@
-nx = 25;
-ny = 25;
+nx = 50;
+ny = nx;
 G = sparse(nx*ny);
-E = zeros(nx*ny, 1);
-for m = 1: 1: nx*ny
-    G(m, m) = 1;
-end
 for i = 1:nx
     for j = 1:ny
         n = j + (i-1)*ny;
         
-        if i == 1 || i == nx ||j == 1 || j == nx
+        if i == 1 || i == nx ||j == 1 || j == ny
             G(n, :) = 0;
             G(n, n) = 1;
         else
@@ -20,4 +16,16 @@ for i = 1:nx
             G(n, n-ny) = 1;
         end
     end
+end
+
+figure(1) 
+spy(G)
+[E, D] = eigs(G, 9, 'SM');
+
+figure(2)
+X = zeros(nx, ny, 9);
+for o = 1:9
+    X(:, :, o) = reshape(E(:, o), nx, ny);
+    subplot(3, 3, o)
+    surf(X(:, :, o))
 end
