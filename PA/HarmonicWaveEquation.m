@@ -1,3 +1,6 @@
+close all
+clear
+
 nx = 50;
 ny = nx;
 G = sparse(nx*ny);
