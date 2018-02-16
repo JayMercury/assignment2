@@ -40,6 +40,8 @@ for i = 1:nx
 end
 
 E = G\V;
+figure(1)
+spy(G);
 
 figure(2)
 X = zeros(nx, ny, 1);
@@ -50,3 +52,4 @@ for i = 1:nx
     end
 end
 surf(X)
+axis tight
