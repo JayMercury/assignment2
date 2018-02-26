@@ -53,8 +53,8 @@ end
 
 V = G\D;    % Calculating the voltage with G matrix
 
-figure(1)
 X = zeros(nx, ny, 1);   % Initializing a matrix for inverting G matrix
+
 % Inverting G matrix
 for i = 1:nx
     for j = 1:ny
@@ -62,7 +62,10 @@ for i = 1:nx
         X(i,j) = V(n);
     end
 end
-surf(X)     % Surface plot of Voltage of one dimension
+
+% Surface plot of Voltage of one dimension
+figure(1)
+surf(X)     
 axis tight
 title("Surface plot of voltage of one dimension case")
 view(-128, 31);

@@ -44,8 +44,8 @@ end
 
 V = G\D;    % Calculating the voltage with G matrix
 
-figure(1)
 X = zeros(nx, ny, 1);   % Initializing a matrix for inverting G matrix
+
 % Inverting G matrix
 for i = 1:nx
     for j = 1:ny
@@ -53,7 +53,10 @@ for i = 1:nx
         X(i,j) = V(n);
     end
 end
-surf(X)     % Surface plot of voltage of two dimension
+
+% Surface plot of voltage of two dimension
+figure(1)
+surf(X)     
 axis tight
 title("Surface plot of voltage of two dimension case with numerical method")
 
@@ -75,6 +78,7 @@ for n = 1: 2: 600
     pause(0.01)
 end
 title("Surface plot of voltage of two dimension case with analytical method")
+
 %% Discussion
 % By using the series solution and solving it through iterations, it is
 % possible to approach the solution that the finite difference method is
