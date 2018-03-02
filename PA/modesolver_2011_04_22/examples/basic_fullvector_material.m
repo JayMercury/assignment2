@@ -27,13 +27,13 @@ dy = 0.0125;        % grid size (vertical)
 lambda = 1.55;      % vacuum wavelength
 nmodes = 1;         % number of modes to compute
 k = 1;
-for i = 3.305:(n1-3.305)/10: n1
+for i = 3.305:(n2-3.305)/10: n2
   
-    [x,y,xc,yc,nx,ny,eps,edges] = waveguidemesh([i,n2,n3],[h1,h2,h3], ...
+    [x,y,xc,yc,nx,ny,eps,edges] = waveguidemesh([n1,i,n3],[h1,h2,h3], ...
                                                 rh,rw,side,dx,dy); 
     % First consider the fundamental TE mode:
 
-    [Hx,Hy,neff] = wgmodes(lambda,n2,nmodes,dx,dy,eps,'000A');
+    [Hx,Hy,neff] = wgmodes(lambda,i,nmodes,dx,dy,eps,'000A');
 
     fprintf(1,'neff = %.6f\n',neff);
     figure(1)
