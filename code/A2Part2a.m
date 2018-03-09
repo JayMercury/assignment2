@@ -12,14 +12,31 @@ ny = nx*3/2;            % Width of the region, 3/2 of length
 G = sparse(nx*ny);      % Initialize a G matrix
 D = zeros(1, nx*ny);    % Initialize a matrix for G matrix operation
 S = zeros(ny, nx);      % Initialize a matrix for sigma
-sigma1 = 1;             % Setting up parameter of sigma in different region
-sigma2 = 1e-2;
+sigma1 = .01;             % Setting up parameter of sigma in different region
+sigma2 = 1;
 box = [nx*2/5 nx*3/5 ny*2/5 ny*3/5]; % Setting up the bottle neck
+
+%Sigma matrix setup
+sigma = zeros(nx, ny);
+for i = 1:nx
+    for j = 1:ny
+        if i > box(1) && i < box(2) && (j < box(3)||j > box(4))
+            sigma(i, j) = sigma1;
+        else
+            sigma(i, j) = sigma2;
+        end
+    end
+end
 
 % Implement the G matrix with the bottle neck condition in the region
 for i = 1:nx
     for j = 1:ny
+        
         n = j + (i-1)*ny;
+        nip = j + (i+1-1)*ny;
+        nim = j + (i-1-1)*ny;
+        njp = j + 1 + (i-1)*ny;
+        njm = j - 1 + (i-1)*ny;
         
         if i == 1
             G(n, :) = 0;
@@ -30,64 +47,28 @@ for i = 1:nx
             G(n, n) = 1;
             D(n) = 0;
         elseif j == 1
-            if i > box(1) && i < box(2)
-                G(n, n) = -3;
-                G(n, n+1) = sigma2;
-                G(n, n+ny) = sigma2;
-                G(n, n-ny) = sigma2;
-            else
-                G(n, n) = -3;
-                G(n, n+1) = sigma1;
-                G(n, n+ny) = sigma1;
-                G(n, n-ny) = sigma1;
-            end
+            G(n, nip) = (sigma(i+1, j) + sigma(i,j))/2;
+            G(n, nim) = (sigma(i-1, j) + sigma(i,j))/2;
+            G(n, njp) = (sigma(i, j+1) + sigma(i,j))/2;            
+            G(n, n) = -(G(n,nip)+G(n,nim)+G(n,njp));
         elseif j == ny
-            if i > box(1) && i < box(2)
-                G(n, n) = -3;
-                G(n, n+1) = sigma2;
-                G(n, n+ny) = sigma2;
-                G(n, n-ny) = sigma2;
-            else
-                G(n, n) = -3;
-                G(n, n+1) = sigma1;
-                G(n, n+ny) = sigma1;
-                G(n, n-ny) = sigma1;
-            end
+            G(n, nip) = (sigma(i+1, j) + sigma(i,j))/2;
+            G(n, nim) = (sigma(i-1, j) + sigma(i,j))/2;
+            G(n, njm) = (sigma(i, j-1) + sigma(i,j))/2;
+            G(n, n) = -(G(n,nip)+G(n,nim)+G(n,njm));
         else
-            if i > box(1) && i < box(2) && (j < box(3)||j > box(4))
-                G(n, n) = -4;
-                G(n, n+1) = sigma2;
-                G(n, n-1) = sigma2;
-                G(n, n+ny) = sigma2;
-                G(n, n-ny) = sigma2;
-            else
-                G(n, n) = -4;
-                G(n, n+1) = sigma1;
-                G(n, n-1) = sigma1;
-                G(n, n+ny) = sigma1;
-                G(n, n-ny) = sigma1;
-            end
-        end
-    end
-end
-
-% Implement a matrix for sigma
-for L = 1 : nx
-    for W = 1 : ny
-        if L >= box(1) && L <= box(2)
-            S(W, L) = sigma2;
-        else
-            S(W, L) = sigma1;
-        end
-        if L >= box(1) && L <= box(2) && W >= box(3) && W <= box(4)
-            S(W, L) = sigma1;
+            G(n, nip) = (sigma(i+1, j) + sigma(i,j))/2;
+            G(n, nim) = (sigma(i-1, j) + sigma(i,j))/2;
+            G(n, njp) = (sigma(i, j+1) + sigma(i,j))/2;
+            G(n, njm) = (sigma(i, j-1) + sigma(i,j))/2;
+            G(n, n) = -(G(n,nip)+G(n,nim)+G(n,njp)+G(n,njm));
         end
     end
 end
 
 % Creating a surface plot for sigma
 figure(1)
-surf(S);
+surf(sigma);
 axis tight
 view([40 30]);
 title("Surface plot of sigma")
@@ -128,8 +109,8 @@ view([40 30]);
 title("Surface plot of y-component of electric field")
 
 % Calculating the current density
-Jx = S.*Ex;
-Jy = S.*Ey;
+Jx = sigma'.*Ex;
+Jy = sigma'.*Ey;
 J = sqrt(Jx.^2 + Jy.^2);
 
 % Creating a surface plot for the current density
